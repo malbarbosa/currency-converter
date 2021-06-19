@@ -1,0 +1,200 @@
+swagger: "2.0"
+info:
+  description: "This is an API Rest to convert currency"
+  version: "1.0.0"
+  title: "Currency Converter Demo"
+  contact:
+    email: "malbarbosa@gmail.com"
+host: "petstore.swagger.io"
+basePath: "/v1"
+tags:
+- name: "user"
+  description: "Operations about user"
+- name: "currency"
+  description: "Operations about currency"
+schemes:
+- "https"
+- "http"
+paths:
+  /user:
+    post:
+      tags:
+      - "user"
+      summary: "Create user"
+      description: "Create a new user"
+      operationId: "createUser"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Created an user"
+        required: true
+        schema:
+          $ref: "#/definitions/UserRequest"
+      responses:
+        201:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/UserResponse"
+        400:
+          description: "bad request"
+        422:
+          description: "User exists"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        500: 
+          description: "Internal Server Error"      
+          schema: 
+            $ref: "#/definitions/ErrorResponse"
+  /user/{userId}:
+    get:
+      tags:
+      - "user"
+      summary: "find one user by id"
+      description: ""
+      operationId: "findUserById"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        name: "userId"
+        description: "List of user"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/UserResponse"
+        400:
+          description: "bad request"
+        404:
+          description: "User not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        500: 
+          description: "Internal Server Error"      
+          schema: 
+            $ref: "#/definitions/ErrorResponse"
+  /convert-currency:
+    post: 
+      tags:
+      - "currency"
+      summary: "Convert currency"
+      description: "Convert one currency into another"
+      operationId: "convertCurrency"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Data to convert"
+        required: true
+        schema:
+          $ref: "#/definitions/ConversionRequest"
+      responses:
+        201:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/ConversionResponse"
+        400:
+          description: "Value invalid"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        404:
+          description: "Symbol not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        500: 
+          description: "Internal Server Error"      
+          schema: 
+            $ref: "#/definitions/ErrorResponse"
+  /convert-currency/{userId}:
+    get:
+      tags:
+      - "currency"
+      summary: "Convert currency"
+      description: "Find conversions made by a user"
+      operationId: "findConversionByUserId"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        name: "userId"
+        description: "user Id"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/ConversionResponse"
+        400:
+          description: "bad request"
+        404:
+          description: "User not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        500: 
+          description: "Internal Server Error"      
+          schema: 
+            $ref: "#/definitions/ErrorResponse"
+definitions:
+  ConversionRequest:
+    type: "object"
+    properties:
+      userId: 
+        type: "integer"
+        format: "int64"
+      sourceCurrency:
+        type: "string"
+      value:
+        type: "number"
+      targetCurrency:
+        type: "string"
+  UserRequest:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      username:
+        type: "string"
+  UserResponse:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+  ConversionResponse:
+    type: "object"
+    properties:
+      conversionId:
+        type: "integer"
+        format: "int64"
+      userId:
+        type: "integer"
+        format: "int64"
+      sourceCurrency:
+        type: "string"
+      sourceValue:
+        type: "number"
+      targetCurrency:
+        type: "string"
+      targetValue:
+        type: "number"
+      conversionRate:
+        type: "number"
+      dateTimeConversion:
+        type: "string"
+  ErrorResponse:
+    type: "object"
+    properties:
+      code:
+        type: "integer"
+        format: "int32"
+      message:
+        type: "string"
