@@ -69,12 +69,8 @@ paths:
           schema:
             $ref: "#/definitions/UserResponse"
         400:
-          description: "bad request"
-        404:
-          description: "User not found"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-        500: 
+          description: "UserId invalid"
+        500:
           description: "Internal Server Error"      
           schema: 
             $ref: "#/definitions/ErrorResponse"
@@ -161,14 +157,18 @@ definitions:
       id:
         type: "integer"
         format: "int64"
+        required: true
       username:
         type: "string"
+        required: true
   UserResponse:
     type: "object"
     properties:
       id:
         type: "integer"
         format: "int64"
+      name:
+        type: "string"
   ConversionResponse:
     type: "object"
     properties:

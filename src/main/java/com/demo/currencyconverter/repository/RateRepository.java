@@ -1,11 +1,9 @@
 package com.demo.currencyconverter.repository;
 
+import com.demo.currencyconverter.dto.CurrencyRateDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import com.demo.currencyconverter.dto.CurrencyRateDTO;
-
 import reactor.core.publisher.Flux;
 
 @FeignClient(name = "rateClient", url = "${feign.url}")

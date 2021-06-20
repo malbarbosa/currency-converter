@@ -1,11 +1,10 @@
 package com.demo.currencyconverter.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import com.demo.currencyconverter.model.User;
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.stereotype.Repository;
 
-import com.demo.currencyconverter.model.User;
-
 @Repository
-public interface UserRepository extends CrudRepository<User, Long>{
+public interface UserRepository extends ReactiveCrudRepository<User, Long>{
 
 }

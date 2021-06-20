@@ -1,28 +1,30 @@
 package com.demo.currencyconverter.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.MongoId;
+
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
-import lombok.Data;
-
-@Table(name = "user") 
-@Entity
-@Data
+@Document(collection = "user")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
 
-	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@MongoId
 	private Long id;
-	@Column
-	private String nome;
-	@OneToMany(mappedBy = "user")
+	private String name;
 	private List<Conversion> conversions;
+	
+	public User(final Long id,final String name) {
+		this.id = id;
+		this.name = name;
+		
+	}
 	
 }
