@@ -69,7 +69,7 @@ paths:
           schema:
             $ref: "#/definitions/UserResponse"
         400:
-          description: "UserId invalid"
+          description: "bad request"
         500:
           description: "Internal Server Error"      
           schema: 
