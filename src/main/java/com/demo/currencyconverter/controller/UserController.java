@@ -1,10 +1,8 @@
 package com.demo.currencyconverter.controller;
 
 import com.demo.currencyconverter.api.UserApi;
-import com.demo.currencyconverter.api.model.ErrorResponse;
 import com.demo.currencyconverter.api.model.UserRequest;
 import com.demo.currencyconverter.api.model.UserResponse;
-import com.demo.currencyconverter.exception.EntityExistsException;
 import com.demo.currencyconverter.model.User;
 import com.demo.currencyconverter.service.UserService;
 import org.modelmapper.ModelMapper;
@@ -15,10 +13,10 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
-
 import java.net.URI;
 
-import static org.springframework.http.ResponseEntity.*;
+import static org.springframework.http.ResponseEntity.created;
+import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 public class UserController implements BaseController, UserApi {
@@ -35,19 +33,12 @@ public class UserController implements BaseController, UserApi {
     public ResponseEntity<UserResponse> createUser(@Valid UserRequest request) {
         User user = new User();
         mapper.map(request,user);
-
-        try {
-            final Mono<User> newUser = userService.save(user);
-            user = newUser.block();
-            UserResponse response = new UserResponse();
-            response.setId(user.getId());
-            response.setName(user.getName());
-            return created(URI.create("/users")).body(response);
-        } catch (EntityExistsException e) {
-            return ResponseEntity.
-                    unprocessableEntity().
-                    body(new ErrorResponse().code(1).message(""))build();
-        }
+        final Mono<User> newUser = userService.save(user);
+        user = newUser.block();
+        UserResponse response = new UserResponse();
+        response.setId(user.getId());
+        response.setName(user.getName());
+        return created(URI.create("/users")).body(response);
     }
 
     @Override

@@ -17,15 +17,14 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public Mono<User> findById(Long id) {
 		Mono<User> user = repository.findById(id);
-
 		return user;
 	}
 
 	@Override
-	public Mono<User> save(User user) throws EntityExistsException {
+	public Mono<User> save(User user){
 		Mono<User> userFound = findById(user.getId());
 		if(userFound.blockOptional().isPresent()){
-			throw new EntityExistsException(2,"User exists");
+			return Mono.error(new EntityExistsException(2,"User exists"));
 		}
 		return repository.save(user);
 	}
