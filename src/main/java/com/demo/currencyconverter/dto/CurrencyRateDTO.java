@@ -2,10 +2,15 @@ package com.demo.currencyconverter.dto;
 
 import lombok.Data;
 
-@Data
-public class CurrencyRateDTO {
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
-	private String message;
+@Data
+public class CurrencyRateDTO implements Serializable {
+
+	private String success;
 	private String base;
+	private Map<String,Double> rates;
 	
 }

@@ -28,9 +28,7 @@ class UserControllerTest extends BaseControllerTest{
     @SneakyThrows
     @DisplayName("Should return 201 when POST /users and the user not exists")
     void createUser() {
-        UserResponse userResponse = new UserResponse();
-        userResponse.setId(1L);
-        userResponse.setName("test");
+        UserResponse userResponse = getUserResponse();
         final User newUser = DataBuilder.createNewUser();
         Mockito.when(userService.save(Mockito.any(User.class))).thenReturn(Mono.just(newUser));
         final WebTestClient.BodySpec<UserResponse, ?> value = webTestClient
@@ -40,6 +38,13 @@ class UserControllerTest extends BaseControllerTest{
                 .exchange().expectStatus().isCreated()
                 .expectBody(UserResponse.class)
                 .isEqualTo(userResponse);
+    }
+
+    private UserResponse getUserResponse() {
+        UserResponse userResponse = new UserResponse();
+        userResponse.setId("123");
+        userResponse.setName("test");
+        return userResponse;
     }
 
     @Test
@@ -65,12 +70,10 @@ class UserControllerTest extends BaseControllerTest{
     @Test
     @DisplayName("Should return 200 when GET /users/{userId} receives a valid id with param")
     void findUserById() throws Exception {
-        UserResponse userResponse = new UserResponse();
-        userResponse.setId(1L);
-        userResponse.setName("test");
+        UserResponse userResponse = getUserResponse();
 
         final User newUser = DataBuilder.createNewUser();
-        Mockito.when(userService.findById(Mockito.any(Long.class))).thenReturn(Mono.just(newUser));
+        Mockito.when(userService.findById(Mockito.any(String.class))).thenReturn(Mono.just(newUser));
         final WebTestClient.BodySpec<UserResponse, ?> value = webTestClient
                 .get().uri(BASE_PATH+"/users/1")
                 .accept(MediaType.APPLICATION_JSON)
@@ -84,7 +87,7 @@ class UserControllerTest extends BaseControllerTest{
     void shouldNotFindUserById() throws Exception {
 
         final User newUser = DataBuilder.createNewUser();
-        Mockito.when(userService.findById(Mockito.any(Long.class))).thenReturn(Mono.just(newUser));
+        Mockito.when(userService.findById(Mockito.any(String.class))).thenReturn(Mono.just(newUser));
 
         final ErrorResponse responseBody = webTestClient
                 .get().uri(BASE_PATH + "/users/a")

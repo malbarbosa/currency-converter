@@ -44,7 +44,7 @@ public class UserController implements BaseController, UserApi {
     @Override
     @GetMapping(value = "/users/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<UserResponse> findUserById(@PathVariable Long userId) {
+    public ResponseEntity<UserResponse> findUserById(@PathVariable String userId) {
         final Mono<User> userFlux = userService.findById(userId);
         final User user = userFlux.block();
         UserResponse userResponse = new UserResponse();

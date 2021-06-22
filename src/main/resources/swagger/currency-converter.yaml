@@ -61,8 +61,7 @@ paths:
         name: "userId"
         description: "List of user"
         required: true
-        type: "integer"
-        format: "int64"
+        type: "string"
       responses:
         200:
           description: "successful operation"
@@ -121,8 +120,7 @@ paths:
         name: "userId"
         description: "user Id"
         required: true
-        type: "integer"
-        format: "int64"
+        type: "string"
       responses:
         200:
           description: "successful operation"
@@ -155,8 +153,7 @@ definitions:
     type: "object"
     properties:
       id:
-        type: "integer"
-        format: "int64"
+        type: "string"
         required: true
       username:
         type: "string"
@@ -165,19 +162,16 @@ definitions:
     type: "object"
     properties:
       id:
-        type: "integer"
-        format: "int64"
+        type: "string"
       name:
         type: "string"
   ConversionResponse:
     type: "object"
     properties:
       conversionId:
-        type: "integer"
-        format: "int64"
+        type: "string"
       userId:
-        type: "integer"
-        format: "int64"
+        type: "string"
       sourceCurrency:
         type: "string"
       sourceValue:

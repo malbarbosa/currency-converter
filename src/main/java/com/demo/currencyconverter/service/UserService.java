@@ -5,7 +5,7 @@ import reactor.core.publisher.Mono;
 
 public interface UserService {
 	
-	Mono<User> findById(final Long id);
+	Mono<User> findById(final String id);
 	
 	Mono<User> save(final User user);
 

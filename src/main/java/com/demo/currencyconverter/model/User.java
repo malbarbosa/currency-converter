@@ -17,11 +17,11 @@ import java.util.List;
 public class User {
 
 	@MongoId
-	private Long id;
+	private String id;
 	private String name;
 	private List<Conversion> conversions;
 	
-	public User(final Long id,final String name) {
+	public User(final String id,final String name) {
 		this.id = id;
 		this.name = name;
 		

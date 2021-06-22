@@ -33,8 +33,8 @@ class UserServiceTest {
 	@Test
 	@DisplayName("Should not find user by ID")
 	void shouldNotFindById() {
-		when(userRepository.findById(any(Long.class))).thenReturn(Mono.empty());
-		var result = userServiceImpl.findById(1L);
+		when(userRepository.findById(any(String.class))).thenReturn(Mono.empty());
+		var result = userServiceImpl.findById("123");
 		assertEquals(Mono.empty(), result);
 	}
 	
@@ -42,8 +42,8 @@ class UserServiceTest {
 	@DisplayName("Should find user by ID")
 	void shouldFindById() {
 		var expected = createNewUser();
-		when(userRepository.findById(any(Long.class))).thenReturn(Mono.just(expected));
-		var result = userServiceImpl.findById(1L);
+		when(userRepository.findById(any(String.class))).thenReturn(Mono.just(expected));
+		var result = userServiceImpl.findById("123");
 		var found = ((User)result.block());	
 		assertEquals(expected, found);
 	}
@@ -53,8 +53,9 @@ class UserServiceTest {
 	@DisplayName("Do not save when the user exists")
 	void shouldNotSaveWhenTheUserExists() {
 		var user = createNewUser();
-		when(userRepository.findById(any(Long.class))).thenReturn(Mono.just(user));
-		userServiceImpl.save(user);
+		when(userRepository.findById(any(String.class))).thenReturn(Mono.just(user));
+
+		final Mono<User> userMono = userServiceImpl.save(user);
 		Mockito.verify(userRepository,times(0)).save(any(User.class));
 	}
 
@@ -63,7 +64,7 @@ class UserServiceTest {
 	@DisplayName("Save with success when the user not exists")
 	void shouldSaveUser() {
 		var user = createNewUser();
-		when(userRepository.findById(any(Long.class))).thenReturn(Mono.empty());
+		when(userRepository.findById(any(String.class))).thenReturn(Mono.empty());
 		Mono<User> userMono = userServiceImpl.save(user);
 		Mockito.verify(userRepository,times(1)).save(any(User.class));
 	}
