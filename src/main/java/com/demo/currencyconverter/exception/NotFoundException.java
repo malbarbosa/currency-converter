@@ -1,17 +1,13 @@
 package com.demo.currencyconverter.exception;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.springframework.http.HttpStatus;
 
-@Data
-@NoArgsConstructor
-public class NotFoundException extends Exception{
-
-    private Integer code;
-
+public class NotFoundException extends RestErrorException{
+    public NotFoundException(){
+        super(HttpStatus.NOT_FOUND);
+    }
     public NotFoundException(Integer code, String message){
-        super(message);
-        this.code = code;
+        super(HttpStatus.NOT_FOUND,message);
     }
 
 }

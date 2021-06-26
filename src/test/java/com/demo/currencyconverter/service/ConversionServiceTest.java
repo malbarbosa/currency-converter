@@ -1,19 +1,16 @@
-package com.demo.currencyconverter.service.impl;
+package com.demo.currencyconverter.service;
 
 import com.demo.currencyconverter.dto.CurrencyRateDTO;
-import com.demo.currencyconverter.dto.RateDTO;
 import com.demo.currencyconverter.model.Conversion;
 import com.demo.currencyconverter.model.User;
 import com.demo.currencyconverter.repository.ConversionRepository;
 import com.demo.currencyconverter.repository.RateRepository;
-import com.demo.currencyconverter.service.UserService;
+import com.demo.currencyconverter.service.impl.ConversionServiceImpl;
 import com.demo.currencyconverter.util.DataBuilder;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -21,18 +18,18 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest(classes = ConversionServiceImpl.class)
 @ExtendWith(value = MockitoExtension.class)
-class ConversionServiceImplTest {
+class ConversionServiceTest {
+
 
     @MockBean
     private ConversionRepository conversionRepository;
@@ -51,11 +48,12 @@ class ConversionServiceImplTest {
     void findAllConversionByUserId() {
         final User user = DataBuilder.createNewUser();
         when(userService.findById("123")).thenReturn(Mono.just(user));
-        final Flux<Conversion> conversions = Flux.just(Conversion.of("0001","123","BRL",1d,"USD").calculateTargetValue(5d),
-                Conversion.of("0001","123","USD",1d,"BRL").calculateTargetValue(0.2d));
+        final Flux<Conversion> conversions = Flux.just(Conversion.of("0001","123","BRL", BigDecimal.valueOf(1),"USD").calculateTargetValue(BigDecimal.valueOf(5)),
+                Conversion.of("0001","123","USD",BigDecimal.valueOf(1),"BRL").calculateTargetValue(BigDecimal.valueOf(0.2)));
         when(conversionRepository.findConversionByUserId(any())).thenReturn(conversions);
         final Flux<Conversion> allConversionByUserId = conversionService.findAllConversionByUserId("123");
-        assertEquals(2,allConversionByUserId.collectList().block().size());
+        StepVerifier.create(allConversionByUserId).expectNextCount(2).verifyComplete();
+
     }
 
     @Test
@@ -72,23 +70,26 @@ class ConversionServiceImplTest {
         CurrencyRateDTO currencyRateDTO = new CurrencyRateDTO();
         currencyRateDTO.setBase("BRL");
         currencyRateDTO.setSuccess("success");
-        Map<String, Double> mapRate = new HashMap<>();
-        mapRate.put("USD",5d);
+        Map<String, BigDecimal> mapRate = new HashMap<>();
+        mapRate.put("USD",BigDecimal.valueOf(5));
         currencyRateDTO.setRates(mapRate);
-        when(rateRepository.findRate(anyString(),anyString())).thenReturn(Flux.just(currencyRateDTO));
-        final Conversion conversion = Conversion.of(null,"123","BRL",25d,"USD");
-        final Flux<Conversion> conversionMono = conversionService.convert(conversion);
+        when(rateRepository.findRate(anyString(),anyString())).thenReturn(Mono.just(currencyRateDTO));
+        final Conversion conversion = Conversion.of(null,"123","BRL",BigDecimal.valueOf(25),"USD");
+        final Mono<Conversion> conversionFlux = conversionService.convert(conversion);
+        conversion.setId("123");
         when(conversionRepository.save(any(Conversion.class))).thenReturn(Mono.just(conversion));
-
-        StepVerifier.create(conversionMono).expectComplete().verify();
+        StepVerifier.create(conversionFlux)
+                .expectNext(conversion)
+                .verifyComplete();
     }
 
     @Test
     @DisplayName("Should not Convert currency with rate invalid")
     void shouldNotConvert() {
-        when(rateRepository.findRate(anyString(),anyString())).thenReturn(Flux.empty());
-        final Conversion conversion = Conversion.of("0001","123","BRL",25d,"USD");
-        conversionService.convert(conversion);
-        verify(conversionRepository,times(0)).save(any(Conversion.class));
+        when(rateRepository.findRate(anyString(),anyString())).thenReturn(Mono.just(DataBuilder.currencyRateDTODefault()));
+        final Conversion conversion = Conversion.of("0001","123","BRL", BigDecimal.valueOf(25),"EUR");
+        final Mono<Conversion> conversionFlux = conversionService.convert(conversion);
+        StepVerifier.create(conversionFlux)
+                .verifyErrorMessage("Any rate was found.");
     }
 }

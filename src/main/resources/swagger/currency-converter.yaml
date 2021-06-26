@@ -8,30 +8,30 @@ info:
 host: "petstore.swagger.io"
 basePath: "/v1"
 tags:
-- name: "user"
-  description: "Operations about user"
-- name: "currency"
-  description: "Operations about currency"
+  - name: "user"
+    description: "Operations about user"
+  - name: "currency"
+    description: "Operations about currency"
 schemes:
-- "https"
-- "http"
+  - "https"
+  - "http"
 paths:
   /user:
     post:
       tags:
-      - "user"
+        - "user"
       summary: "Create user"
       description: "Create a new user"
       operationId: "createUser"
       produces:
-      - "application/json"
+        - "application/json"
       parameters:
-      - in: "body"
-        name: "body"
-        description: "Created an user"
-        required: true
-        schema:
-          $ref: "#/definitions/UserRequest"
+        - in: "body"
+          name: "body"
+          description: "Created an user"
+          required: true
+          schema:
+            $ref: "#/definitions/UserRequest"
       responses:
         201:
           description: "successful operation"
@@ -43,52 +43,50 @@ paths:
           description: "User exists"
           schema:
             $ref: "#/definitions/ErrorResponse"
-        500: 
-          description: "Internal Server Error"      
-          schema: 
+        500:
+          description: "Internal Server Error"
+          schema:
             $ref: "#/definitions/ErrorResponse"
   /user/{userId}:
     get:
       tags:
-      - "user"
+        - "user"
       summary: "find one user by id"
       description: ""
       operationId: "findUserById"
       produces:
-      - "application/json"
+        - "application/json"
       parameters:
-      - in: "path"
-        name: "userId"
-        description: "List of user"
-        required: true
-        type: "string"
+        - in: "path"
+          name: "userId"
+          description: "List of user"
+          required: true
+          type: "string"
       responses:
         200:
           description: "successful operation"
           schema:
             $ref: "#/definitions/UserResponse"
-        400:
-          description: "bad request"
         500:
-          description: "Internal Server Error"      
-          schema: 
+          description: "Internal Server Error"
+          schema:
             $ref: "#/definitions/ErrorResponse"
   /convert-currency:
-    post: 
+    post:
       tags:
-      - "currency"
+        - "currency"
       summary: "Convert currency"
       description: "Convert one currency into another"
       operationId: "convertCurrency"
       produces:
-      - "application/json"
+        - "application/json"
       parameters:
-      - in: "body"
-        name: "body"
-        description: "Data to convert"
-        required: true
-        schema:
-          $ref: "#/definitions/ConversionRequest"
+        - in: "body"
+          name: "body"
+          description: "Data to convert"
+          required: true
+          schema:
+            $ref: "#/definitions/ConversionRequest"
       responses:
         201:
           description: "successful operation"
@@ -99,65 +97,72 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
         404:
-          description: "Symbol not found"
+          description: "Symbol not found or User not found"
           schema:
             $ref: "#/definitions/ErrorResponse"
-        500: 
-          description: "Internal Server Error"      
-          schema: 
+        500:
+          description: "Internal Server Error"
+          schema:
             $ref: "#/definitions/ErrorResponse"
   /convert-currency/{userId}:
     get:
       tags:
-      - "currency"
+        - "currency"
       summary: "Convert currency"
       description: "Find conversions made by a user"
-      operationId: "findConversionByUserId"
+      operationId: "findAllConversionByUserId"
       produces:
-      - "application/json"
+        - "application/json"
       parameters:
-      - in: "path"
-        name: "userId"
-        description: "user Id"
-        required: true
-        type: "string"
+        - in: "path"
+          name: "userId"
+          description: "user Id"
+          required: true
+          type: "string"
       responses:
         200:
           description: "successful operation"
           schema:
-            $ref: "#/definitions/ConversionResponse"
+            type: "array"
+            items:
+              $ref: "#/definitions/ConversionResponse"
         400:
           description: "bad request"
         404:
           description: "User not found"
           schema:
             $ref: "#/definitions/ErrorResponse"
-        500: 
-          description: "Internal Server Error"      
-          schema: 
+        500:
+          description: "Internal Server Error"
+          schema:
             $ref: "#/definitions/ErrorResponse"
 definitions:
   ConversionRequest:
     type: "object"
+    required:
+      - userId
+      - sourceCurrency
+      - value
+      - targetCurrency
     properties:
-      userId: 
-        type: "integer"
-        format: "int64"
+      userId:
+        type: "string"
       sourceCurrency:
         type: "string"
-      value:
+      sourceValue:
         type: "number"
       targetCurrency:
         type: "string"
   UserRequest:
     type: "object"
+    required:
+      - id
+      - username
     properties:
       id:
         type: "string"
-        required: true
       username:
         type: "string"
-        required: true
   UserResponse:
     type: "object"
     properties:

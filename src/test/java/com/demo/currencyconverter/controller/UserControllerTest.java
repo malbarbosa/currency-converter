@@ -1,11 +1,11 @@
 package com.demo.currencyconverter.controller;
 
-import com.demo.currencyconverter.api.model.ErrorResponse;
-import com.demo.currencyconverter.api.model.UserResponse;
+import com.demo.currencyconverter.controller.request.UserRequest;
+import com.demo.currencyconverter.controller.response.ErrorResponse;
+import com.demo.currencyconverter.controller.response.UserResponse;
 import com.demo.currencyconverter.exception.EntityExistsException;
 import com.demo.currencyconverter.model.User;
 import com.demo.currencyconverter.service.UserService;
-import com.demo.currencyconverter.util.DataBuilder;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -18,6 +18,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
+import static com.demo.currencyconverter.util.DataBuilder.*;
+
 @WebFluxTest(UserController.class)
 class UserControllerTest extends BaseControllerTest{
 
@@ -29,8 +31,8 @@ class UserControllerTest extends BaseControllerTest{
     @DisplayName("Should return 201 when POST /users and the user not exists")
     void createUser() {
         UserResponse userResponse = getUserResponse();
-        final User newUser = DataBuilder.createNewUser();
-        Mockito.when(userService.save(Mockito.any(User.class))).thenReturn(Mono.just(newUser));
+        final UserRequest newUser = createNewUserRequest();
+        Mockito.when(userService.save(Mockito.any(User.class))).thenReturn(Mono.just(createNewUser()));
         final WebTestClient.BodySpec<UserResponse, ?> value = webTestClient
                 .post().uri(BASE_PATH+"/users")
                 .accept(MediaType.APPLICATION_JSON)
@@ -40,18 +42,13 @@ class UserControllerTest extends BaseControllerTest{
                 .isEqualTo(userResponse);
     }
 
-    private UserResponse getUserResponse() {
-        UserResponse userResponse = new UserResponse();
-        userResponse.setId("123");
-        userResponse.setName("test");
-        return userResponse;
-    }
+
 
     @Test
     @DisplayName("Should return 422 when POST /users return one user ")
     void shouldReturnOneUserExists() throws Exception {
 
-        final User newUser = DataBuilder.createNewUser();
+        final UserRequest newUser = createNewUserRequest();
         Mockito.when(userService.save(Mockito.any(User.class)))
                 .thenThrow(new EntityExistsException(HttpStatus.UNPROCESSABLE_ENTITY.value(), "User exists"));
 
@@ -72,7 +69,7 @@ class UserControllerTest extends BaseControllerTest{
     void findUserById() throws Exception {
         UserResponse userResponse = getUserResponse();
 
-        final User newUser = DataBuilder.createNewUser();
+        final User newUser = createNewUser();
         Mockito.when(userService.findById(Mockito.any(String.class))).thenReturn(Mono.just(newUser));
         final WebTestClient.BodySpec<UserResponse, ?> value = webTestClient
                 .get().uri(BASE_PATH+"/users/1")
@@ -81,21 +78,5 @@ class UserControllerTest extends BaseControllerTest{
                 .expectBody(UserResponse.class)
                 .isEqualTo(userResponse);
     }
-
-    @Test
-    @DisplayName("Should return 400 when GET /users/{userId} and invalid id with param")
-    void shouldNotFindUserById() throws Exception {
-
-        final User newUser = DataBuilder.createNewUser();
-        Mockito.when(userService.findById(Mockito.any(String.class))).thenReturn(Mono.just(newUser));
-
-        final ErrorResponse responseBody = webTestClient
-                .get().uri(BASE_PATH + "/users/a")
-                .accept(MediaType.APPLICATION_JSON)
-                .exchange().expectStatus().isBadRequest()
-                .expectBody(ErrorResponse.class)
-                .returnResult().getResponseBody();
-    }
-
 
 }

@@ -2,17 +2,15 @@ package com.demo.currencyconverter.model;
 
 import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 @Document(collection = "conversion")
-
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
-@NoArgsConstructor
 public class Conversion {
 
 	@MongoId
@@ -27,21 +25,20 @@ public class Conversion {
 	private String sourceCurrency;
 	@Getter
 	@Setter
-	private Double sourceValue;
+	private BigDecimal sourceValue;
 	@Getter
 	@Setter
 	private String targetCurrency;
 	@Getter
-	private Double targetValue;
+	private BigDecimal targetValue;
 	@Getter
-	private Double rateValue;
+	private BigDecimal rateValue;
 	@Getter
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
 	private OffsetDateTime dateTimeConversion;
 
-
-	public static Conversion of(String id, String userId, String sourceCurrency, Double sourceValue, String targetCurrency){
-		Conversion conversion = new Conversion();
+	public static Conversion of(String id, String userId, String sourceCurrency, BigDecimal sourceValue, String targetCurrency){
+		var conversion = new Conversion();
 		conversion.id = id;
 		conversion.userId = userId;
 		conversion.sourceCurrency = sourceCurrency;
@@ -50,10 +47,14 @@ public class Conversion {
 		conversion.dateTimeConversion = OffsetDateTime.now();
 		return conversion;
 	}
-	public Conversion calculateTargetValue(Double rateValue){
+	public Conversion calculateTargetValue(BigDecimal rateValue){
 		this.rateValue = rateValue;
-		this.targetValue = this.sourceValue/rateValue;
+		this.targetValue = this.sourceValue.divide(rateValue);
 		return this;
+	}
+
+	public static Conversion getInstance(){
+		return new Conversion();
 	}
 
 }

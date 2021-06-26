@@ -5,4 +5,19 @@ feign:
         connectTimeout: 5000
         readTimeout: 5000
         loggerLevel: basic
-  url: https://api.exchangerate.host
+    url: https://api.exchangerate.host
+spring:
+  swagger:
+    baseUrl: "localhost:8080"
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/conversion
+  logging:
+    level:
+      reactor:
+        netty:
+          http:
+            client: DEBUG
+
+
+

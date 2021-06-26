@@ -1,6 +1,6 @@
 package com.demo.currencyconverter.exception;
 
-import com.demo.currencyconverter.api.model.ErrorResponse;
+import com.demo.currencyconverter.controller.response.ErrorResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -11,7 +11,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RestErrorException.class)
     public ResponseEntity<ErrorResponse> handleEntityExists(RuntimeException ex) {
         RestErrorException error = (RestErrorException) ex;
-        ErrorResponse errorResponse = new ErrorResponse().code(error.getStatus().value()).message(error.getMessage());
+        ErrorResponse errorResponse = ErrorResponse.builder().code(error.getStatus().value()).message(error.getMessage()).build();
         return ResponseEntity.status(error.getStatus()).body(errorResponse);
     }
 }
