@@ -35,7 +35,7 @@ jobs:
         java-version: '11'
         distribution: 'adopt'
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      run: mvn cobertura:cobertura coveralls:report --file pom.xml
     - name: Coveralls GitHub Action
       uses: coverallsapp/github-action@v1.1.2
       with:
