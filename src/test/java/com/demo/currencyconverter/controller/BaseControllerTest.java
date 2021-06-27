@@ -7,7 +7,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
-class BaseControllerTest {
+abstract class  BaseControllerTest {
 
     static final String BASE_PATH = "/v1/converter-currency";
     @Autowired

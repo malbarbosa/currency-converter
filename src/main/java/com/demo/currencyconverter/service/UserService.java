@@ -9,4 +9,5 @@ public interface UserService {
 	
 	Mono<User> save(final User user);
 
+    Mono<User> findByName(String name);
 }

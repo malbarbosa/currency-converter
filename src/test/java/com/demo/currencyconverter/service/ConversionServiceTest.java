@@ -1,12 +1,13 @@
 package com.demo.currencyconverter.service;
 
 import com.demo.currencyconverter.dto.CurrencyRateDTO;
+import com.demo.currencyconverter.integration.CurrencyRateClient;
 import com.demo.currencyconverter.model.Conversion;
 import com.demo.currencyconverter.model.User;
 import com.demo.currencyconverter.repository.ConversionRepository;
-import com.demo.currencyconverter.repository.RateRepository;
 import com.demo.currencyconverter.service.impl.ConversionServiceImpl;
 import com.demo.currencyconverter.util.DataBuilder;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.util.Assert;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -38,7 +40,7 @@ class ConversionServiceTest {
     private UserService userService;
 
     @MockBean
-    private RateRepository rateRepository;
+    private CurrencyRateClient currencyRateClient;
 
     @InjectMocks
     private ConversionServiceImpl conversionService;
@@ -73,7 +75,7 @@ class ConversionServiceTest {
         Map<String, BigDecimal> mapRate = new HashMap<>();
         mapRate.put("USD",BigDecimal.valueOf(5));
         currencyRateDTO.setRates(mapRate);
-        when(rateRepository.findRate(anyString(),anyString())).thenReturn(Mono.just(currencyRateDTO));
+        when(currencyRateClient.findRate(anyString(),anyString())).thenReturn(currencyRateDTO);
         final Conversion conversion = Conversion.of(null,"123","BRL",BigDecimal.valueOf(25),"USD");
         final Mono<Conversion> conversionFlux = conversionService.convert(conversion);
         conversion.setId("123");
@@ -86,10 +88,11 @@ class ConversionServiceTest {
     @Test
     @DisplayName("Should not Convert currency with rate invalid")
     void shouldNotConvert() {
-        when(rateRepository.findRate(anyString(),anyString())).thenReturn(Mono.just(DataBuilder.currencyRateDTODefault()));
+        when(currencyRateClient.findRate(anyString(),anyString())).thenReturn(DataBuilder.currencyRateDTODefault());
         final Conversion conversion = Conversion.of("0001","123","BRL", BigDecimal.valueOf(25),"EUR");
         final Mono<Conversion> conversionFlux = conversionService.convert(conversion);
         StepVerifier.create(conversionFlux)
-                .verifyErrorMessage("Any rate was found.");
+                .expectNextCount(0)
+                .verifyComplete();
     }
 }

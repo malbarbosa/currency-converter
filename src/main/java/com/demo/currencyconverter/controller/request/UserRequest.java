@@ -1,25 +1,31 @@
 package com.demo.currencyconverter.controller.request;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
+import lombok.*;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.Max;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 
 @Validated
-@Data
-public class UserRequest   {
-  @JsonProperty("id")
-  @NotNull
-  private String id = null;
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode
+public class UserRequest  implements Serializable {
 
-  @JsonProperty("username")
   @NotBlank
-  @Max(value = 255)
-  private String username = null;
+  @Length(max = 255)
+  private String name;
+
+  @NotBlank
+  @Length(max = 128)
+  @Email
+  private String email;
+
 
 
 }

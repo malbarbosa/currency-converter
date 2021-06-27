@@ -20,24 +20,15 @@ import java.util.Map;
 public class DataBuilder {
 
     public static User createNewUser(){
-        User user = new User();
-        user.setId("123");
-        user.setName("test");
-        return user;
+        return new User("123","test","123@test.com");
     }
 
     public static UserRequest createNewUserRequest(){
-        UserRequest user = new UserRequest();
-        user.setId("123");
-        user.setUsername("test");
-        return user;
+        return new UserRequest("123","123@test.com");
     }
 
     public static UserResponse getUserResponse() {
-        UserResponse userResponse = new UserResponse();
-        userResponse.setId("123");
-        userResponse.setName("test");
-        return userResponse;
+        return new UserResponse("123","test","123@test.com");
     }
 
     public static CurrencyRateDTO currencyRateDTODefault(){
@@ -55,14 +46,14 @@ public class DataBuilder {
         ConversionRequest request = new ConversionRequest();
         request.setSourceCurrency("BRL");
         request.setTargetCurrency("USD");
-        //request.setSourceValue(BigDecimal.valueOf(25));
+        request.setSourceValue(BigDecimal.valueOf(25));
         request.setUserId("123");
         return request;
     }
 
     public static Conversion createNewConversion(){
         final Conversion conversion = Conversion.of("123456", "123", "BRL", BigDecimal.valueOf(25), "USD");
-        return conversion.calculateTargetValue(BigDecimal.valueOf(5));
+        return conversion.calculateTargetValue(BigDecimal.valueOf(0.2));
     }
 
     public static ConversionResponse createNewConversionResponse(){
@@ -71,9 +62,9 @@ public class DataBuilder {
         response.setSourceCurrency("BRL");
         response.setUserId("123");
         response.setSourceValue(BigDecimal.valueOf(25));
-        response.setConversionRate(BigDecimal.valueOf(5));
+        response.setConversionRate(BigDecimal.valueOf(0.2));
         response.setTargetCurrency("USD");
-        response.setTargetValue(BigDecimal.valueOf(5));
+        response.setTargetValue(BigDecimal.valueOf(5).setScale(2));
         response.setDateTimeConversion(OffsetDateTime.of(2021,1,1,12,0,0,0, ZoneOffset.UTC).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
         return response;
     }

@@ -35,7 +35,7 @@ class UserServiceTest {
 	void shouldNotFindById() {
 		when(userRepository.findById(any(String.class))).thenReturn(Mono.empty());
 		var result = userServiceImpl.findById("123");
-		assertEquals(Mono.empty(), result);
+		StepVerifier.create(result).expectError().verify();
 	}
 	
 	@Test
@@ -53,7 +53,7 @@ class UserServiceTest {
 	@DisplayName("Do not save when the user exists")
 	void shouldNotSaveWhenTheUserExists() {
 		var user = createNewUser();
-		when(userRepository.findById(any(String.class))).thenReturn(Mono.just(user));
+		when(userRepository.findByEmail(any(String.class))).thenReturn(Mono.just(user));
 		Mockito.when(userRepository.save(any(User.class))).thenReturn(Mono.just(user));
 		final Mono<User> userMono = userServiceImpl.save(user);
 		StepVerifier.create(userMono).expectError().verify();
@@ -64,7 +64,7 @@ class UserServiceTest {
 	@DisplayName("Save with success when the user not exists")
 	void shouldSaveUser() {
 		var user = createNewUser();
-		when(userRepository.findById(any(String.class))).thenReturn(Mono.empty());
+		when(userRepository.findByEmail(any(String.class))).thenReturn(Mono.empty());
 		Mockito.when(userRepository.save(any(User.class))).thenReturn(Mono.just(user));
 		Mono<User> userMono = userServiceImpl.save(user);
 		StepVerifier.create(userMono).expectNext(user).verifyComplete();

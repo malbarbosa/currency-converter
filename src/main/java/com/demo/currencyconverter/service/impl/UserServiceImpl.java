@@ -1,6 +1,7 @@
 package com.demo.currencyconverter.service.impl;
 
 import com.demo.currencyconverter.exception.EntityExistsException;
+import com.demo.currencyconverter.exception.EntityNotFoundException;
 import com.demo.currencyconverter.model.User;
 import com.demo.currencyconverter.repository.UserRepository;
 import com.demo.currencyconverter.service.UserService;
@@ -18,18 +19,23 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	public Mono<User> findById(String id) {
-		Mono<User> user = repository.findById(id);
-		return user;
+		return repository.findById(id)
+				.switchIfEmpty(Mono.error(new EntityNotFoundException("user.notfound")));
 	}
 
 	@Override
 	public Mono<User> save(User user){
-		final Mono<Object> newUser = findById(user.getId()).timeout(Duration.ofSeconds(10))
-				.flatMap((userFound) -> Mono.error(new EntityExistsException(2, "User exists")))
+		final Mono<Object> newUser = repository.findByEmail(user.getEmail()).timeout(Duration.ofSeconds(10))
+				.flatMap(userFound -> Mono.error(new EntityExistsException("user.exists")))
 				.switchIfEmpty(repository.save(user));
 
 		return newUser.cast(User.class);
 	}
-	
+
+	@Override
+	public Mono<User> findByName(String name) {
+		return repository.findByNameIgnoreCase(name);
+	}
+
 
 }

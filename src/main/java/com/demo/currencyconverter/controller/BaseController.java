@@ -2,8 +2,9 @@ package com.demo.currencyconverter.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@RequestMapping(BaseController.BASE_PATH)
+@RequestMapping( value = "/v1/converter-currency")
 public interface BaseController {
 
-    static final String BASE_PATH = "/v1/converter-currency";
+
+
 }

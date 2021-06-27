@@ -6,11 +6,12 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Validated
 @Data
-public class ConversionResponse   {
+public class ConversionResponse  implements Serializable {
   @JsonProperty("conversionId")
   @NotNull
   private String conversionId = null;
@@ -25,7 +26,7 @@ public class ConversionResponse   {
 
   @JsonProperty("sourceValue")
   @NotNull
-  private BigDecimal sourceValue = null;
+  private BigDecimal sourceValue = BigDecimal.ZERO;
 
   @JsonProperty("targetCurrency")
   @NotBlank
@@ -33,11 +34,11 @@ public class ConversionResponse   {
 
   @JsonProperty("targetValue")
   @NotNull
-  private BigDecimal targetValue = null;
+  private BigDecimal targetValue = BigDecimal.ZERO;
 
   @JsonProperty("conversionRate")
   @NotNull
-  private BigDecimal conversionRate = null;
+  private BigDecimal conversionRate = BigDecimal.ZERO;
 
   @JsonProperty("dateTimeConversion")
   @NotBlank
