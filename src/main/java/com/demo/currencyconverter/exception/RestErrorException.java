@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 public class RestErrorException extends RuntimeException{
 
     @Getter
-    private HttpStatus status;
+    private final HttpStatus status;
 
     public RestErrorException(HttpStatus status){
         this.status = status;
@@ -17,9 +17,5 @@ public class RestErrorException extends RuntimeException{
         this.status = status;
     }
 
-    public RestErrorException(HttpStatus status, String message, Throwable e ){
-        super(message,e);
-        this.status = status;
-    }
 
 }
