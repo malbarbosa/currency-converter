@@ -34,9 +34,5 @@ jobs:
       with:
         java-version: '11'
         distribution: 'adopt'
-    - name: Build with Maven
+    - name: Build with Maven and Coverage
       run: mvn clean test -P coverage jacoco:report coveralls:report --file pom.xml
-    - name: Coveralls GitHub Action
-      uses: coverallsapp/github-action@v1.1.2
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
