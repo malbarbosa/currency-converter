@@ -18,6 +18,8 @@ spring:
         netty:
           http:
             client: DEBUG
-
+springdoc:
+  swagger-ui:
+    path: "/swagger-ui.html"
 
 

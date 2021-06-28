@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 @Document(collection = "conversion")
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-@AllArgsConstructor
+@ToString
 public class Conversion {
 
 	@Id

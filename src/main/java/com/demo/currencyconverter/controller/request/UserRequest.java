@@ -1,11 +1,14 @@
 package com.demo.currencyconverter.controller.request;
 
-import lombok.*;
-import org.hibernate.validator.constraints.Length;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 
@@ -14,15 +17,14 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
 public class UserRequest  implements Serializable {
 
   @NotBlank
-  @Length(max = 255)
+  @Size(max = 255)
   private String name;
 
   @NotBlank
-  @Length(max = 128)
+  @Size(max = 128)
   @Email
   private String email;
 

@@ -16,7 +16,7 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import static com.demo.currencyconverter.util.DataBuilder.createNewUser;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
@@ -44,8 +44,7 @@ class UserServiceTest {
 		var expected = createNewUser();
 		when(userRepository.findById(any(String.class))).thenReturn(Mono.just(expected));
 		var result = userServiceImpl.findById("123");
-		var found = ((User)result.block());	
-		assertEquals(expected, found);
+		StepVerifier.create(result).expectNext(expected).verifyComplete();
 	}
 
 	@Test
@@ -70,4 +69,13 @@ class UserServiceTest {
 		StepVerifier.create(userMono).expectNext(user).verifyComplete();
 	}
 
+	@Test
+	@SneakyThrows
+	@DisplayName("Should find user by name")
+	void shouldFindUserByName() {
+		var user = createNewUser();
+		Mockito.when(userRepository.findByNameIgnoreCase(anyString())).thenReturn(Mono.just(user));
+		final Mono<User> userMono = userServiceImpl.findByName("test");
+		StepVerifier.create(userMono).expectNext(user).verifyComplete();
+	}
 }

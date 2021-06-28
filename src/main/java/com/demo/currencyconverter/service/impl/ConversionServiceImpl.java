@@ -31,26 +31,36 @@ public class ConversionServiceImpl implements ConversionService {
 
     @Override
     public Flux<Conversion> findAllConversionByUserId(String userId) {
-        log.info("Start method findAllConversionByUserId");
-        return userService.findById(userId)
+        log.info(String.format("Start method findAllConversionByUserId, userId=%s",userId));
+        final Flux<Conversion> conversionFlux = userService.findById(userId)
                 .flatMapMany(user ->
-                    conversionRepository.findConversionByUserId(user.getId()))
+                        conversionRepository.findConversionByUserId(user.getId()))
                 .switchIfEmpty(Flux.error(new EntityNotFoundException("user.without.conversions")));
+        log.info("Finish method findAllConversionByUserId");
+        return conversionFlux;
 
     }
 
     @Override
     public Mono<Conversion> convert(Conversion conversion) {
+        log.info(String.format("Start method convert, conversion=%s",conversion.toString()));
          final Mono<CurrencyRateDTO> rateMono = Mono.just(currencyRateClient.findRate(conversion.getSourceCurrency(), conversion.getTargetCurrency()));
          return rateMono
                 .flatMap(rate -> {
+                    Mono<Conversion> conversionMono = null;
                     final BigDecimal rateValue = rate.getRates().get(conversion.getTargetCurrency());
                     if(rateValue == null){
-                        return Mono.empty();
+                        log.info(String.format("Rate %s not found.",conversion.getTargetCurrency()));
+                        conversionMono = Mono.empty();
                     }else{
                         conversion.calculateTargetValue(rateValue);
-                        return conversionRepository.save(conversion);
+                        conversionMono = conversionRepository.save(conversion);
+                        log.info("Conversion save with success.");
+
                     }
-                }).doOnError(throwable -> Mono.error(new InternalServerErrorException("conversion.error")));
+                    log.info("Finish method convert.");
+                    return conversionMono;
+                }).log(log.getName())
+                 .doOnError(throwable -> Mono.error(new InternalServerErrorException("conversion.error")));
     }
 }
