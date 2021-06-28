@@ -32,12 +32,10 @@ public class ConversionServiceImpl implements ConversionService {
     @Override
     public Flux<Conversion> findAllConversionByUserId(String userId) {
         log.info(String.format("Start method findAllConversionByUserId, userId=%s",userId));
-        final Flux<Conversion> conversionFlux = userService.findById(userId)
+        return userService.findById(userId)
                 .flatMapMany(user ->
                         conversionRepository.findConversionByUserId(user.getId()))
                 .switchIfEmpty(Flux.error(new EntityNotFoundException("user.without.conversions")));
-        log.info("Finish method findAllConversionByUserId");
-        return conversionFlux;
 
     }
 

@@ -2,7 +2,7 @@
 
 API to convert one currency to another, ex. BRL to USD.
 
-### Swagger
+
 
 ### Installation
 
@@ -12,12 +12,17 @@ First to start this project is necessary install the Java 11, Maven 3.6.3 and Do
 docker pull mongo:latest
 ```
 
+After pulling the mongo image, run the following command to run it. 
+```
+docker run --name mongoDB -d mongo:lastes
+```
+
 #### Getting Started
 
 After install the frameworks and database it's time to clone the project.
 
 ```
-git clone 
+git clone https://github.com/malbarbosa/currency-converter.git
 ```
 
 #### Starting up API
@@ -32,3 +37,7 @@ Step 2:
 ```
 java -jar currency-converter-1.0.0.jar
 ```
+
+### Swagger
+
+The documentation of API can find it at link: ```http://localhost:8080/swagger-ui.html```

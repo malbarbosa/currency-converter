@@ -12,6 +12,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -74,8 +75,8 @@ class UserServiceTest {
 	@DisplayName("Should find user by name")
 	void shouldFindUserByName() {
 		var user = createNewUser();
-		Mockito.when(userRepository.findByNameIgnoreCase(anyString())).thenReturn(Mono.just(user));
-		final Mono<User> userMono = userServiceImpl.findByName("test");
+		Mockito.when(userRepository.findByNameIgnoreCase(anyString())).thenReturn(Flux.just(user));
+		final Flux<User> userMono = userServiceImpl.findByName("test");
 		StepVerifier.create(userMono).expectNext(user).verifyComplete();
 	}
 }

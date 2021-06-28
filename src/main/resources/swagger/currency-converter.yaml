@@ -40,7 +40,7 @@ paths:
         400:
           description: "bad request"
         422:
-          description: "User exists"
+          description: "User already exists."
           schema:
             $ref: "#/definitions/ErrorResponse"
         500:

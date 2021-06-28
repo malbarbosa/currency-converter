@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.util.UriComponentsBuilder;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static com.demo.currencyconverter.util.DataBuilder.*;
@@ -100,7 +101,7 @@ class UserControllerTest extends BaseControllerTest{
         UserResponse userResponse = getUserResponse();
 
         final User newUser = createNewUser();
-        Mockito.when(userService.findByName(Mockito.any(String.class))).thenReturn(Mono.just(newUser));
+        Mockito.when(userService.findByName(Mockito.any(String.class))).thenReturn(Flux.just(newUser));
         final WebTestClient.BodySpec<UserResponse, ?> value = webTestClient
                 .get().uri(UriComponentsBuilder.fromPath(BASE_PATH+"/users")
                         .queryParam("name","Test")

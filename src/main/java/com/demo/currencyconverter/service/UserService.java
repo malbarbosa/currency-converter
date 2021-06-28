@@ -1,6 +1,7 @@
 package com.demo.currencyconverter.service;
 
 import com.demo.currencyconverter.model.User;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface UserService {
@@ -9,5 +10,5 @@ public interface UserService {
 	
 	Mono<User> save(final User user);
 
-    Mono<User> findByName(String name);
+    Flux<User> findByName(String name);
 }
